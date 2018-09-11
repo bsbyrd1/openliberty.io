@@ -12,6 +12,7 @@
 var backgroundSizeAdjustment = 200;
 var twoColumnBreakpoint = 1170;
 var threeColumnBreakpoint = 1440;
+var currentStep = getScrolledVisibleSectionID();
 
 function inSingleColumnView(){
     return(window.innerWidth <= twoColumnBreakpoint);
@@ -19,6 +20,29 @@ function inSingleColumnView(){
 
 function inMobile(){
     return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+}
+
+// Returns a function, that, as long as it continues to be invoked, will not
+// be triggered. The function will be called after it stops being called for
+// N milliseconds. If `immediate` is passed, trigger the function on the
+// leading edge, instead of the trailing.
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate){
+                func.apply(context, args);
+            }
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow){
+            func.apply(context, args);
+        } 
+    };
 }
 
 // Handle sticky header in IE, because IE doesn't support position: sticky
@@ -124,8 +148,17 @@ function handleFloatingCodeColumn() {
     }
 }
 
+var checkForInertialScrolling = debounce(snapToSection,80);
+
 /* Detect if the user has scrolled downwards into a new section and apply inertial resistence. */
-function checkForInertialScrolling (event){
+function snapToSection(event){
+    var prevStep = currentStep;
+    currentStep = getScrolledVisibleSectionID();
+
+    if (prevStep !== currentStep) {
+        console.log(1);
+    }
+
     if(inSingleColumnView()){
         return;
     }
@@ -154,8 +187,8 @@ function checkForInertialScrolling (event){
 
         // If scrolling down, check if the section header is coming into view
         if(dir == 'down'){   
-            if(top > 0 && top < windowHeight && bottom > (windowHeight - 200) && bottom < windowHeight){
-                // Section header is fully in view with the bottom in the last 200 pixels of the viewport.
+            if(top > 0 && top < windowHeight && bottom > (windowHeight - 300) && bottom < windowHeight){
+                // Section header is fully in view with the bottom in the last 300 pixels of the viewport.
                 // Snap to the top of the element.
                 scrollPosition = elem.offset().top - navbarHeight;
                 return false;
@@ -172,14 +205,14 @@ function checkForInertialScrolling (event){
             }
         }        
     });   
-    if(scrollPosition){
-        event.preventDefault();
-        event.stopPropagation();
-        // Snap to the top of the previous section so the user can read the last part of it. 
-        $('html').stop().animate({
-            scrollTop: scrollPosition
-        }, 500);          
-    } 
+    // if(scrollPosition){
+    //     event.preventDefault();
+    //     event.stopPropagation();
+    //     // Snap to the top of the previous section so the user can read the last part of it. 
+    //     $('html').stop().animate({
+    //         scrollTop: scrollPosition
+    //     }, 250);          
+    // } 
 }
 
 /**
