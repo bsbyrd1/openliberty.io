@@ -152,18 +152,18 @@ var checkForInertialScrolling = debounce(snapToSection,80);
 
 /* Detect if the user has scrolled downwards into a new section and apply inertial resistence. */
 function snapToSection(event){
-    var prevStep = currentStep;
-    currentStep = getScrolledVisibleSectionID();
+    // var prevStep = currentStep;
+    // currentStep = getScrolledVisibleSectionID();
 
-    if (prevStep !== currentStep) {
-        console.log(1);
-    }
+    // if (prevStep !== currentStep) {
+    //     console.log(1);
+    // }
 
     if(inSingleColumnView()){
         return;
     }
     var origEvent = event.originalEvent;
-    var windowHeight = $(window).height();
+    var windowHeight = window.innerHeight;
     var navbarHeight = $("nav").height();
     var scrollPosition;
 
@@ -186,33 +186,48 @@ function snapToSection(event){
         var bottom = rect.bottom;
 
         // If scrolling down, check if the section header is coming into view
-        if(dir == 'down'){   
-            if(top > 0 && top < windowHeight && bottom > (windowHeight - 300) && bottom < windowHeight){
-                // Section header is fully in view with the bottom in the last 300 pixels of the viewport.
-                // Snap to the top of the element.
-                scrollPosition = elem.offset().top - navbarHeight;
-                return false;
-            }      
+        if(dir == 'down'){
+            if(top > 0 && top < windowHeight){
+                if(bottom > (windowHeight - 150)){
+                    // Snap to the bottom of the previous section.
+                    var prevSection = elem.parents('.sect1').prev();
+                    var prevSectionHeight = prevSection.height();                
+                    scrollPosition = prevSection.offset().top - windowHeight + prevSectionHeight;                
+                    return false;
+                } else {
+                    // Section header is fully in view with the bottom in the last fourth of the viewport.
+                    // Snap to the top of the element.
+                    scrollPosition = elem.offset().top - navbarHeight;
+                    return false;
+                }
+            }    
         } else {
             // Scrolling up
             // Check to see that the current section's top is in viewport and at least 200 pixels from the top of the screen but not more than 400.
             // Scroll up by a full page's height so that the previous section ends at the bottom of the viewport for optimal reading.
-            if(top > 200 && top < 400){
-                var prevSection = elem.parents('.sect1').prev();
-                var prevSectionHeight = prevSection.height();                
-                scrollPosition = prevSection.offset().top - windowHeight + prevSectionHeight;                
-                return false;
+            if(top > 0){
+                if(top >= 200 && top < (windowHeight * 0.5)){
+                    var prevSection = elem.parents('.sect1').prev();
+                    var prevSectionHeight = prevSection.height();                
+                    scrollPosition = prevSection.offset().top - windowHeight + prevSectionHeight;                
+                    return false;
+                } else if(top < 200){
+                    // Scroll back to current header
+                    scrollPosition = elem.offset().top - navbarHeight;
+                    return false;
+                }
             }
+            
         }        
     });   
-    // if(scrollPosition){
-    //     event.preventDefault();
-    //     event.stopPropagation();
-    //     // Snap to the top of the previous section so the user can read the last part of it. 
-    //     $('html').stop().animate({
-    //         scrollTop: scrollPosition
-    //     }, 250);          
-    // } 
+    if(scrollPosition){
+        event.preventDefault();
+        event.stopPropagation();
+        // Snap to the top of the previous section so the user can read the last part of it. 
+        $('html').stop().animate({
+            scrollTop: scrollPosition
+        }, 250);          
+    } 
 }
 
 /**
