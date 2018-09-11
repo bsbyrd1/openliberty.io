@@ -219,7 +219,11 @@ header {
 
 #guide_content .sect1 > .sectionbody {
     padding-top: 19px;
-    margin-bottom: 200px;
+    // margin-bottom: 200px;
+
+    // @media (max-width: 1170px){
+    //     margin-bottom: 0;
+    // }
 }
 
 #guide_content div.sect1 {
