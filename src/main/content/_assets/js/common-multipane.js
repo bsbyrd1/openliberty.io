@@ -148,10 +148,11 @@ function handleFloatingCodeColumn() {
     }
 }
 
-var checkForInertialScrolling = debounce(snapToSection,80);
+var checkForInertialScrolling = debounce(snapToSection,150);
 
 /* Detect if the user has scrolled downwards into a new section and apply inertial resistence. */
 function snapToSection(event){
+    console.log('Debounce is done.');
     // var prevStep = currentStep;
     // currentStep = getScrolledVisibleSectionID();
 
@@ -188,7 +189,7 @@ function snapToSection(event){
         // If scrolling down, check if the section header is coming into view
         if(dir == 'down'){
             if(top > 0 && top < windowHeight){
-                if(bottom > (windowHeight - 150)){
+                if(bottom > (windowHeight - 100)){
                     // Snap to the bottom of the previous section.
                     var prevSection = elem.parents('.sect1').prev();
                     var prevSectionHeight = prevSection.height();                
