@@ -189,7 +189,7 @@ function snapToSection(event){
         // If scrolling down, check if the section header is coming into view
         if(dir == 'down'){
             if(top > 0 && top < windowHeight){
-                if(bottom > (windowHeight - 100)){
+                if(bottom > (windowHeight - 150)){
                     // Snap to the bottom of the previous section.
                     var prevSection = elem.parents('.sect1').prev();
                     var prevSectionHeight = prevSection.height();                
@@ -207,12 +207,12 @@ function snapToSection(event){
             // Check to see that the current section's top is in viewport and at least 200 pixels from the top of the screen but not more than 400.
             // Scroll up by a full page's height so that the previous section ends at the bottom of the viewport for optimal reading.
             if(top > 0){
-                if(top >= 200 && top < (windowHeight * 0.5)){
+                if(top >= 250 && top < (windowHeight * 0.5)){
                     var prevSection = elem.parents('.sect1').prev();
                     var prevSectionHeight = prevSection.height();                
                     scrollPosition = prevSection.offset().top - windowHeight + prevSectionHeight;                
                     return false;
-                } else if(top < 200){
+                } else if(top < 250){
                     // Scroll back to current header
                     scrollPosition = elem.offset().top - navbarHeight;
                     return false;
