@@ -82,11 +82,11 @@
     outline: none;
 }
 
-#content, #common_feature {
+#content {
     padding: 20px 20px 50px 20px;
 }
 
-#feature_title, #common_feature_title {
+#feature_title {
     color: #24243B;
 }
 
